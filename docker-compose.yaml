@@ -1,6 +1,6 @@
 services:
-  db:
-    container_name: postgresql_db_aca
+  mardb:
+    container_name: postgresql_db_mariki
     image: postgis/postgis:17-3.4
     restart: always
     env_file: .env
@@ -22,11 +22,11 @@ services:
       - ./init:/docker-entrypoint-initdb.d
       # Make CSVs available to COPY during init (read-only)
       - ./data:/docker-entrypoint-initdb.d/data:ro
-      - ./data/analytics_schema:/data:ro
+      - ./data/analytics:/data:ro
 
 
   pgadmin:
-    container_name: pgadmin_aca
+    container_name: pgadmin_mariki
     image: dpage/pgadmin4
     restart: always
     env_file: .env
@@ -37,7 +37,7 @@ services:
       - "5050:80"
     volumes:
       - ./pgadmin_data:/var/lib/pgadmin
-      - ./queries:/var/lib/pgadmin/storage/admin_admin.com/queries
-      - ./queries:/var/lib/pgadmin/storage/admin_admin.com/erd
+      - ./queries:/var/lib/pgadmin/storage/marrik_marpet.com/queries
+      - ./queries:/var/lib/pgadmin/storage/marrik_marpet.com/erd
     depends_on:
-      - db
+      - mardb
