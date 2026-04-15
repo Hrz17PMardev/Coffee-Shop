@@ -42,7 +42,6 @@ CREATE TABLE analytics.stores (
 
 --     Populating Store Locations (Geographical hierarchy)  and Stores tables
 -----------------------------------------------------------------------------------------
-TRUNCATE TABLE analytics._stg_store_location_boundaries;
 
 COPY analytics._stg_store_location_boundaries
 FROM '/docker-entrypoint-initdb.d/data/analytics_schema/store_location_boundaries.csv'
@@ -55,6 +54,9 @@ SELECT
   location_name,
   ST_GeomFromText(wkt, 4326)
 FROM analytics._stg_store_location_boundaries;
+
+-- Check if geometries are valid
+SELECT ST_IsValid(geom) FROM analytics.store_locations;
 
 
 INSERT INTO analytics.stores (store_id, location_id)
@@ -150,6 +152,12 @@ FROM analytics.coffee_shop_raw raw
 JOIN analytics.stores s             ON raw.store_id = s.store_id
 JOIN analytics.products_variants pv ON raw.product_detail = pv.product_variant
 ;
+
+SELECT COUNT (DISTINCT store_id) FROM analytics.stores;                          -- 3
+SELECT COUNT (DISTINCT location_id) FROM analytics.store_locations;              -- 3
+SELECT COUNT (DISTINCT category_id) FROM analytics.categories;                   -- 9            
+SELECT COUNT (DISTINCT product_id) FROM analytics.products;                      -- 29
+SELECT COUNT (DISTINCT product_variant_id) FROM analytics.products_variants;     -- 80
 
 
 CREATE INDEX IF NOT EXISTS idx_store_id   ON analytics.transactions(store_id);
