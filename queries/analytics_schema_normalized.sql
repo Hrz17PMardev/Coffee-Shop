@@ -23,6 +23,8 @@ CREATE TABLE analytics.store_locations (
     geom GEOMETRY(Polygon, 4326)
 );
 
+SELECT * FROM analytics.store_locations;
+
 -- Staging table for raw WKT imports
 DROP TABLE IF EXISTS analytics._stg_store_location_boundaries CASCADE;
 
@@ -39,6 +41,8 @@ CREATE TABLE analytics.stores (
 	store_id INT PRIMARY KEY,
 	location_id INT REFERENCES analytics.store_locations(location_id)
 );
+
+SELECT * FROM analytics.stores;
 
 --     Populating Store Locations (Geographical hierarchy)  and Stores tables
 -----------------------------------------------------------------------------------------
@@ -82,7 +86,7 @@ SELECT DISTINCT
 	category
 FROM analytics.coffee_shop_raw raw;
 
-
+SELECT * FROM analytics.categories;
 
 -- Creating Products table
 ---------------------------------------------
@@ -102,7 +106,7 @@ SELECT DISTINCT
 FROM analytics.coffee_shop_raw raw
 LEFT JOIN analytics.categories c ON raw.category = c.category;
 
-
+SELECT * FROM analytics.products;
 
 -- Creating product Variants table
 ----------------------------------------------
@@ -123,7 +127,7 @@ FROM analytics.coffee_shop_raw raw
 LEFT JOIN analytics.products p ON raw.product_name = p.product_name
 ;
 
-
+SELECT * FROM analytics.products_variants;
 
 -- Creating Transactions table
 ------------------------------------------------------------
@@ -152,6 +156,8 @@ FROM analytics.coffee_shop_raw raw
 JOIN analytics.stores s             ON raw.store_id = s.store_id
 JOIN analytics.products_variants pv ON raw.product_detail = pv.product_variant
 ;
+
+SELECT * FROM analytics.transactions;
 
 SELECT COUNT (DISTINCT store_id) FROM analytics.stores;                          -- 3
 SELECT COUNT (DISTINCT location_id) FROM analytics.store_locations;              -- 3
