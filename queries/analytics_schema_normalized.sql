@@ -51,7 +51,8 @@ COPY analytics._stg_store_location_boundaries
 FROM '/docker-entrypoint-initdb.d/data/analytics_schema/store_location_boundaries.csv'
 CSV HEADER;
 
--- Convert WKT to geometry and populate spatial table
+-- After loading the data into the staging table, we convert the WKT (Well-Known Text) 
+-- representation of geometries into PostGIS geometry objects and populate the `analytics.store_locations` table.
 INSERT INTO analytics.store_locations (location_id, location_name, geom)
 SELECT
   location_id,
@@ -62,7 +63,8 @@ FROM analytics._stg_store_location_boundaries;
 -- Check if geometries are valid
 SELECT ST_IsValid(geom) FROM analytics.store_locations;
 
-
+-- Next, we populate the `analytics.stores` 
+-- table by joining the raw coffee shop data with the store locations to associate each store with its location.
 INSERT INTO analytics.stores (store_id, location_id)
 SELECT
 	DISTINCT
@@ -81,6 +83,7 @@ CREATE TABLE analytics.categories (
 	category VARCHAR(50)
 );
 
+-- We then populate the `analytics.categories` table to store unique product categories.
 INSERT INTO analytics.categories (category)
 SELECT DISTINCT
 	category
@@ -89,7 +92,7 @@ FROM analytics.coffee_shop_raw raw;
 SELECT * FROM analytics.categories;
 
 -- Creating Products table
----------------------------------------------
+-------------------------------------------------------------------------------------------
 
 DROP TABLE IF EXISTS analytics.products CASCADE;
 
@@ -99,6 +102,9 @@ CREATE TABLE analytics.products (
 	category_id INT REFERENCES analytics.categories(category_id)
 );
 
+
+-- Then, we populate the `analytics.products` table by joining the raw coffee shop data with the categories 
+-- to associate each product with its category.
 INSERT INTO analytics.products (product_name, category_id)
 SELECT DISTINCT
 	product_name,
@@ -109,7 +115,7 @@ LEFT JOIN analytics.categories c ON raw.category = c.category;
 SELECT * FROM analytics.products;
 
 -- Creating product Variants table
-----------------------------------------------
+--------------------------------------------------------------------------------------------
 DROP TABLE IF EXISTS analytics.products_variants CASCADE;
 
 CREATE TABLE analytics.products_variants (
@@ -118,6 +124,8 @@ CREATE TABLE analytics.products_variants (
 	product_id INT REFERENCES analytics.products(product_id)
 );
 
+-- After populating the products table, we populate the `analytics.products_variants` table by joining the raw coffee shop data with the products 
+-- to associate each product variant with its corresponding product.
 INSERT INTO analytics.products_variants (product_variant_id, product_variant, product_id)
 SELECT DISTINCT
 	raw.product_id,
@@ -130,7 +138,7 @@ LEFT JOIN analytics.products p ON raw.product_name = p.product_name
 SELECT * FROM analytics.products_variants;
 
 -- Creating Transactions table
-------------------------------------------------------------
+--------------------------------------------------------------------------------------------
 DROP TABLE IF EXISTS analytics.transactions CASCADE;
 
 CREATE TABLE analytics.transactions (
@@ -143,6 +151,8 @@ CREATE TABLE analytics.transactions (
 	product_variant_id INT REFERENCES analytics.products_variants(product_variant_id)
 );
 
+-- Finally, we populate the `analytics.transactions` table by joining the raw coffee shop data with the products variants and stores 
+-- to associate each transaction with its corresponding product variant and store.
 INSERT INTO analytics.transactions (transaction_id, date, time, quantity, unit_price, store_id, product_variant_id)
 SELECT DISTINCT
 	raw.transaction_id,
@@ -159,13 +169,16 @@ JOIN analytics.products_variants pv ON raw.product_detail = pv.product_variant
 
 SELECT * FROM analytics.transactions;
 
+-----------------------------------------------------------------------------------------------------
+
+-- Data Quality Checks
 SELECT COUNT (DISTINCT store_id) FROM analytics.stores;                          -- 3
 SELECT COUNT (DISTINCT location_id) FROM analytics.store_locations;              -- 3
 SELECT COUNT (DISTINCT category_id) FROM analytics.categories;                   -- 9            
 SELECT COUNT (DISTINCT product_id) FROM analytics.products;                      -- 29
 SELECT COUNT (DISTINCT product_variant_id) FROM analytics.products_variants;     -- 80
 
-
+-- Creating indexes to optimize query performance on the transactions table
 CREATE INDEX IF NOT EXISTS idx_store_id   ON analytics.transactions(store_id);
 CREATE INDEX IF NOT EXISTS idx_product_variant_id ON analytics.transactions(product_variant_id);
 
