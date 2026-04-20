@@ -5,7 +5,7 @@ SELECT
 FROM analytics.store_location_summary;
 
 
--- Sales Densiity
+-- Sales Density
 SELECT
 	*
 FROM analytics.sales_density;

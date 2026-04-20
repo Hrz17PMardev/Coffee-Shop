@@ -1,4 +1,4 @@
--- 11. Average Unit Price Trends
+-- Average Unit Price Trends
 SELECT 
 	*
 FROM analytics.price_trends;
@@ -13,7 +13,7 @@ WHERE pt.product_variant_id = 82          -- I Need My Bean! Diner mug
 ORDER BY date
 ;
 
--- 9. Customer Basket Analysis
+-- Customer Basket Analysis
 EXPLAIN ANALYZE
 SELECT DISTINCT
 	transaction_id,
