@@ -224,6 +224,3 @@ SELECT
 	revenue_rank,
 	store_revenue_performance(total_revenue) AS seller_by_revenue
 FROM store_ranks_by_quantity_revenue;
-
-
--- ------------- ------------ ------- EXPLORE-ner anel nkarel presentaciayi hamar  --------- ------------ ----------- ------------- --------------
