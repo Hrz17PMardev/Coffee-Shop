@@ -1,4 +1,5 @@
 -- -- ------------ Exploring coffee_shop_raw table --------------------
+
 -- NYC-based coffee shop transaction data
 
 -- The raw data

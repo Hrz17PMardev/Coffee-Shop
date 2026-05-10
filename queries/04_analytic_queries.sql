@@ -6,6 +6,7 @@ SELECT
 FROM analytics.transactions tr
 GROUP BY tr.store_id, date
 ;
+
 -- Performance per Day of Week
 SELECT 
     EXTRACT(DOW FROM date) AS day_of_week,
@@ -17,7 +18,7 @@ FROM analytics.transactions
 GROUP BY day_of_week, weekday_name
 ORDER BY total_sales DESC;
 
--- Per Store Performance per Day of Week
+-- Performance by Store/Location per Day of Week
 SELECT 
     s.store_id,
     sl.location_name,
@@ -33,38 +34,7 @@ GROUP BY s.store_id, sl.location_name, day_of_week, weekday_name
 ORDER BY s.store_id, day_of_week;
 
 
-
-
--- 2. Sales by Category per Store
-SELECT 
-	c.category, 
-	t.store_id, 
-	location_name,
-	SUM(t.quantity*t.unit_price) AS revenue_per_category
-FROM analytics.transactions t
-JOIN analytics.stores s ON t.store_id = s.store_id
-JOIN analytics.store_locations sl ON sl.location_id = s.location_id
-JOIN analytics.products_variants pv ON t.product_variant_id = pv.product_variant_id
-JOIN analytics.products p ON pv.product_id = p.product_id
-JOIN analytics.categories c ON p.category_id = c.category_id
-GROUP BY t.store_id, c.category, location_name 
-;
-
-
--- 3. Category Trends Over Time
-SELECT 
-	c.category, 
-	t.date, 
-	SUM(t.quantity*t.unit_price) AS revenue_by_category_and_date
-FROM analytics.transactions t
-JOIN analytics.products_variants pv ON t.product_variant_id = pv.product_variant_id
-JOIN analytics.products p ON pv.product_id = p.product_id
-JOIN analytics.categories c ON p.category_id = c.category_id
-GROUP BY c.category, t.date
-;
-
-
--- 4. Store Location + Date        
+-- 2. Store Location + Date        
 EXPLAIN ANALYZE
 SELECT 
 	sl.location_name, 
@@ -83,8 +53,56 @@ ORDER BY sl.location_name
 
 -- With idx_transactions_store_date + GIST index on geom: PostgreSQL uses both indexes to filter by date and spatial boundaries efficiently.
 
+--  3. Peak Hours Analysis
+SELECT 
+	*
+FROM analytics.hourly_sales	
+ORDER BY total_sales DESC
+;
 
--- 5. Product Variant Trends    
+--  peak hours by stores
+SELECT 
+	location_name,
+	EXTRACT(HOUR FROM time) AS hour, 
+	SUM(quantity*unit_price) AS total_sales
+FROM analytics.transactions t
+JOIN analytics.sales_by_store slbst ON t.store_id = slbst.store_id
+GROUP BY location_name, hour
+ORDER BY total_sales DESC
+LIMIT 10
+;
+
+
+-- 4. Sales by Category per Store
+SELECT 
+	c.category, 
+	t.store_id, 
+	location_name,
+	SUM(t.quantity*t.unit_price) AS revenue_per_category
+FROM analytics.transactions t
+JOIN analytics.stores s ON t.store_id = s.store_id
+JOIN analytics.store_locations sl ON sl.location_id = s.location_id
+JOIN analytics.products_variants pv ON t.product_variant_id = pv.product_variant_id
+JOIN analytics.products p ON pv.product_id = p.product_id
+JOIN analytics.categories c ON p.category_id = c.category_id
+GROUP BY t.store_id, c.category, location_name 
+;
+
+
+-- 5. Category Trends Over Time
+SELECT 
+	c.category, 
+	t.date, 
+	SUM(t.quantity*t.unit_price) AS revenue_by_category_and_date
+FROM analytics.transactions t
+JOIN analytics.products_variants pv ON t.product_variant_id = pv.product_variant_id
+JOIN analytics.products p ON pv.product_id = p.product_id
+JOIN analytics.categories c ON p.category_id = c.category_id
+GROUP BY c.category, t.date
+;
+
+
+-- 6. Product Variant Trends    
 SELECT
     t.date,
     pv.product_variant,
@@ -105,7 +123,7 @@ GROUP BY  pv.product_variant
 ORDER BY  pv.product_variant;
 
 
--- 6. Store + Product Variant    
+-- 7. Store + Product Variant    
 EXPLAIN ANALYZE
 SELECT 
 	t.store_id, 
@@ -116,19 +134,21 @@ JOIN analytics.products_variants pv ON t.product_variant_id = pv.product_variant
 GROUP BY t.store_id, pv.product_variant
 ORDER BY units_sold DESC;
 
--- 7. Area of each Store Location
+
+-- 8. Area of each Store Location
 SELECT 
 	location_name, 
 	ST_Area(geom::geography)/1000000 AS area_km2
 FROM analytics.store_location_summary;
 
 
--- 8 Ayl ashxarh
+-- 9. Sales Density 
 SELECT
 	*
 FROM analytics.sales_density;
 
--- 9. Customer Basket Analysis
+
+-- 10. Customer Basket Analysis
 EXPLAIN ANALYZE
 SELECT DISTINCT
 	transaction_id,
@@ -136,25 +156,6 @@ SELECT DISTINCT
 FROM analytics.transactions t
 JOIN analytics.products_variants pv ON t.product_variant_id = pv.product_variant_id
 GROUP BY transaction_id, product_variant
-;
-
---  10. Peak Hours Analysis
-SELECT 
-	*
-FROM analytics.hourly_sales	
-ORDER BY total_sales DESC
-;
-
---  peak hours by stores
-SELECT 
-	location_name,
-	EXTRACT(HOUR FROM time) AS hour, 
-	SUM(quantity*unit_price) AS total_sales
-FROM analytics.transactions t
-JOIN analytics.sales_by_store slbst ON t.store_id = slbst.store_id
-GROUP BY location_name, hour
-ORDER BY total_sales DESC
-LIMIT 10
 ;
 
 
@@ -173,7 +174,8 @@ WHERE pt.product_variant_id = 82  -- I Need My Bean! Diner mug
 ORDER BY date
 ;
 
--- Store Performance Ranking
+
+-- 12. Store Performance Ranking
 CREATE OR REPLACE VIEW store_ranks_by_quantity_revenue AS
 SELECT
 	location_name,
