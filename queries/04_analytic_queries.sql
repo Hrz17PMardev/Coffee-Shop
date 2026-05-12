@@ -1,3 +1,21 @@
+/*
+ * Analytical Query Script
+ *
+ * This file contains a collection of analytical SQL queries for the coffee shop analytics
+ * schema. It is designed to explore sales patterns, store performance, category and product
+ * trends, temporal behavior, geospatial metrics, and transaction-level customer basket analysis.
+ *
+ * Key areas covered:
+ * - daily store revenue and weekday performance
+ * - location-based revenue and geographic rankings
+ * - hourly sales peaks and sales density
+ * - category and product variant trends over time
+ * - store-product performance and store ranking with segmentation
+ *
+ * The script also defines a utility view and helper functions to classify store performance
+ * by revenue and quantity sold.
+ */
+
 -- 1. Sales by Store per Day
 SELECT 
 	tr.store_id, 
@@ -35,7 +53,6 @@ ORDER BY s.store_id, day_of_week;
 
 
 -- 2. Store Location + Date        
-EXPLAIN ANALYZE
 SELECT 
 	sl.location_name, 
 	t.date, 
@@ -124,7 +141,6 @@ ORDER BY  pv.product_variant;
 
 
 -- 7. Store + Product Variant    
-EXPLAIN ANALYZE
 SELECT 
 	t.store_id, 
 	pv.product_variant, 
@@ -149,7 +165,6 @@ FROM analytics.sales_density;
 
 
 -- 10. Customer Basket Analysis
-EXPLAIN ANALYZE
 SELECT DISTINCT
 	transaction_id,
 	product_variant

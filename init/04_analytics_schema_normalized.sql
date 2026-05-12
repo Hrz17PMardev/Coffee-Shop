@@ -1,3 +1,31 @@
+/*
+ * Analytics Schema Normalization Script
+ *
+ * This script creates a normalized relational schema for the coffee shop analytics database.
+ * Normalization involves organizing data into related tables to eliminate redundancy,
+ * improve data integrity, and enhance query performance. The schema is designed to support
+ * efficient analytical queries on sales transactions, products, stores, and geographic locations.
+ *
+ * Key Features:
+ * - PostGIS extension: Enables spatial data types and functions for geographic analysis.
+ * - Table Structure: Normalized into categories, products, product variants, stores, store locations,
+ *   and transactions with proper foreign key relationships.
+ * - Spatial Data: Store locations include geometry polygons for boundary analysis.
+ * - Indexes: Multiple indexes on the transactions table to optimize common query patterns
+ *   such as filtering by date, store, product variant, and combinations thereof.
+ *
+ * Tables Created:
+ * - store_locations: Geographic boundaries and names of store locations (spatial table).
+ * - _stg_store_location_boundaries: Staging table for importing raw WKT geometry data.
+ * - stores: Individual store details linked to locations.
+ * - categories: Product categories (e.g., Coffee, Bakery).
+ * - products: Product details linked to categories.
+ * - products_variants: Specific variants of products (e.g., sizes, flavors).
+ * - transactions: Core sales transaction data with foreign keys to related tables.
+ *
+ * Indexes: Created on transactions table for performance optimization of analytical queries.
+ */
+
 -- PostGis extension for GEOMETRY
 DROP EXTENSION IF EXISTS postgis CASCADE;
 CREATE EXTENSION postgis;
@@ -7,7 +35,7 @@ SELECT PostGIS_Version();
 ALTER TABLE analytics.coffee_shop_raw
 ALTER COLUMN store_id TYPE INT,
 ALTER COLUMN product_id TYPE INT;
-    
+
 
 --  Creating Store Locations (Geographic hierarchy) and Stores tables
 -----------------------------------------------------------------------------------------

@@ -1,3 +1,19 @@
+/*
+ * Data Audit Script for coffee_shop_raw
+ *
+ * This file performs an initial quality and structural audit of the raw coffee shop
+ * dataset stored in analytics.coffee_shop_raw. It reviews row counts, uniqueness,
+ * entity repetition, and normalization issues to support schema design and
+ * data modeling decisions.
+ *
+ * The audit covers:
+ * - basic record sampling
+ * - row and transaction counts
+ * - distinct values for stores, categories, products, and locations
+ * - identification of denormalization and transitive dependencies
+ * - guidance for separating transactions, stores, categories, products, and geography
+ */
+
 -- -- ------------ Exploring coffee_shop_raw table --------------------
 
 -- NYC-based coffee shop transaction data

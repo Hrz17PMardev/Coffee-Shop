@@ -1,3 +1,19 @@
+/*
+ * Analytical Views and Performance Functions
+ *
+ * This script defines an analytics view and two helper SQL functions for the
+ * coffee shop analytics schema. The view combines store ranking data with
+ * geographical location labels, while the functions classify stores based on
+ * revenue performance and sold quantity performance.
+ *
+ * Definitions included:
+ * - store_ranks_by_quantity_revenue: view joining store rankings to store and
+ *   location metadata.
+ * - store_revenue_performance(): function mapping total revenue into Low/Medium/High.
+ * - sold_quantity_per_store(): function mapping total units sold into
+ *   Developing/Rising/Elite.
+ */
+
 -------------------------------------------------------------------------------
                        -- VIEW: Store Ranks by Quantity and revenue 
 -------------------------------------------------------------------------------

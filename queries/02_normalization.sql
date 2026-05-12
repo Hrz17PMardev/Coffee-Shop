@@ -1,3 +1,19 @@
+/*
+ * Normalization Schema Setup Script
+ *
+ * This script prepares the analytics schema for the coffee shop dataset by creating
+ * normalized tables and supporting spatial data structures. It converts raw data into a
+ * relational model optimized for analytics, separating transactions, products, categories,
+ * stores, and geographic locations.
+ *
+ * Main steps:
+ * 1. Enable PostGIS for spatial geometry support.
+ * 2. Adjust raw data column types for storage efficiency.
+ * 3. Create normalized tables for store locations, stores, categories, products,
+ *    product variants, and transactions.
+ * 4. Add indexes on the transactions table to improve performance for common analytics queries.
+ */
+
 -- PostGis extension for GEOMETRY
 DROP EXTENSION IF EXISTS postgis CASCADE;
 CREATE EXTENSION postgis;

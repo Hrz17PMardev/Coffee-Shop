@@ -1,4 +1,24 @@
--- What is the general statistical summary of coffee shop condition?
+/*
+ * Analytical Summary Table Generator
+ *
+ * This script creates derived analytics tables from the normalized coffee shop dataset.
+ * Each section aggregates transaction-level data into reusable summary tables that
+ * support reporting, trend analysis, product performance, store performance, and
+ * spatial sales analysis.
+ *
+ * Created tables and their purposes:
+ * - sales_by_store: total revenue, transactions, and units sold per store.
+ * - sales_by_category: revenue and volume by product category.
+ * - daily_sales: daily revenue, units sold, and transaction counts.
+ * - top_products: ranked product performance by revenue and units.
+ * - store_location_summary: geospatial sales summary for store locations.
+ * - hourly_sales: revenue by hour of day.
+ * - price_trends: average unit price by product variant and date.
+ * - store_rankings: store ranking by units sold and revenue.
+ * - sales_density: revenue density over geographic area.
+ */
+
+-- General transaction summary statistics
 SELECT
 	MAX(date) AS max_date,                                                    
 	MIN(date) AS min_date,                                                    
@@ -118,7 +138,7 @@ CREATE INDEX IF NOT EXISTS idx_store_location_summary_geom
     ON analytics.store_location_summary
     USING GIST (geom);
 
- -- Hours Analysis
+-- Hourly Sales Analysis
 DROP TABLE IF EXISTS analytics.hourly_sales CASCADE;
  
 CREATE TABLE analytics.hourly_sales AS
@@ -154,7 +174,7 @@ SELECT
 FROM analytics.transactions
 GROUP BY store_id;
 
--- Sales density per km2
+-- Sales density per square meter
 DROP TABLE IF EXISTS analytics.sales_density CASCADE;
 
 CREATE TABLE analytics.sales_density AS
