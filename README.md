@@ -69,7 +69,7 @@ The core schema ensures data integrity through PK/FK constraints:
 │   ├── 03_views_functions.sql   # Custom segmentation logic & Reporting views
 │   ├── 04_analytic_queries.sql  # Complex trend & spatial analysis
 │   └── 05_performance_ops.sql   # Indexing & EXPLAIN ANALYZE benchmarks
-└── presentation/       # PDF Executive Summary & SQL Analysis visuals
+└── presentation/       # PDF Executive Summary & SQL Analysis visuals (Incoming)
 ```
 
 ---
