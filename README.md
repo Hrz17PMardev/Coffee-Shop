@@ -84,13 +84,17 @@ The core schema ensures data integrity through PK/FK constraints:
    ```bash
    git clone https://github.com/Hrz17PMardev/Coffee-Shop.git
    ```
-2. **Launch the environment:**
+2. **Go to the relevant folder:**
+   ```bash
+   cd  project_folder
+   ```
+3. **Launch the environment:**
    ```bash
    docker-compose up -d
    ```
    *The initialization scripts will automatically run in sequence to build the schema and load the data.*
 
-3. **Access the Data:** Connect your preferred SQL client (pgAdmin4/VS Code) to `localhost:5432`.
+4. **Access the Data:** Connect your preferred SQL client (pgAdmin4/VS Code) to `localhost:5432`.
 
 ---
 
