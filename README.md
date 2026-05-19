@@ -59,6 +59,15 @@ The core schema ensures data integrity through PK/FK constraints:
 - **Ranking:** Applied SQL Window Functions (`RANK()`) to compare stores by both volume (units) and value (revenue).
 
 ---
+### 🎯 Final Analytical Findings
+By executing a **Python Z-score normalization script** over the aggregated database views, the stores were programmatically segmented based on formal statistical standard deviations:
+*   **Hell's Kitchen:** **Elite Volume / High Revenue.** The top-performing market, maximizing spatial efficiency to yield the highest revenue-per-square-meter.
+*   **Lower Manhattan:** **Elite Volume / Medium Revenue.** High transaction density but lower Average Transaction Value (ATV), representing a strategic upselling opportunity.
+*   **Astoria:** **Developing Volume / Medium Revenue.** A growing market with resilient transactional spending despite lower foot traffic.
+
+*(Note: Full strategic business recommendations, market cannibalization analysis, and visual data insights will be available in the `presentation/` folder).*
+
+---
 
 ## 📂 Repository Structure
 
