@@ -211,8 +211,8 @@ LANGUAGE sql
 AS $$
     SELECT 
 		CASE
-            WHEN p_total_revenue < 229000.0 THEN 'Low'
-            WHEN p_total_revenue BETWEEN 229000.0 AND 235000.0 THEN 'Medium'
+            WHEN p_total_revenue < 231296.25 THEN 'Low'
+            WHEN p_total_revenue BETWEEN 231296.25 AND 234578.63 THEN 'Medium'
             ELSE 'High'
         END;
 	;
@@ -226,8 +226,8 @@ LANGUAGE sql
 AS $$
     SELECT 
 		CASE
-            WHEN p_total_units_sold < 71000 THEN 'Developing'
-            WHEN p_total_units_sold BETWEEN 71000 AND 71650 THEN 'Rising'
+            WHEN p_total_units_sold < 71273.92 THEN 'Developing'
+            WHEN p_total_units_sold BETWEEN 71273.92 AND 71706.08 THEN 'Rising'
             ELSE 'Elite'
         END;
 	;

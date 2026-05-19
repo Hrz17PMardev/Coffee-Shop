@@ -7,10 +7,10 @@ from scipy import stats
 # 1. Import the dot-env library
 from dotenv import load_dotenv
 
-# 2. Explicitly load the environment variables from your .env file
+# 2. Load the environment variables from .env file
 load_dotenv()
 
-# 1. Establish database connection (Update credentials to match Docker setup)
+# 3. Establish database connection (Update credentials to match Docker setup)
 try:
     conn = psycopg2.connect(
         host="localhost",
@@ -24,7 +24,7 @@ except Exception as e:
     print(f"❌ Connection failed: {e}")
     exit()
 
-# 2. Extract analytical view data into Pandas
+# 4. Extract analytical view data into Pandas
 query = "SELECT location_name, total_units_sold, total_revenue FROM store_ranks_by_quantity_revenue;"
 df = pd.read_sql_query(query, conn)
 conn.close()
@@ -32,11 +32,11 @@ conn.close()
 print("\n--- Raw Data Snapshot ---")
 print(df)
 
-# 3. Calculate Z-Scores using SciPy
+# 5. Calculate Z-Scores using SciPy
 df['revenue_zscore'] = stats.zscore(df['total_revenue'])
 df['quantity_zscore'] = stats.zscore(df['total_units_sold'])
 
-# 4. Programmatic Segmentation based on Standard Deviations (Z-Scores)
+# 6. Programmatic Segmentation based on Standard Deviations (Z-Scores)
 # - Z < -0.5: Low / Developing
 # - -0.5 <= Z <= 0.5: Medium / Rising
 # - Z > 0.5: High / Elite
@@ -52,12 +52,16 @@ df['revenue_tier'] = df['revenue_zscore'].apply(segment_by_z, args=('Low', 'Medi
 df['volume_tier'] = df['quantity_zscore'].apply(segment_by_z, args=('Developing', 'Rising', 'Elite'))
 
 print("\n--- 📊 Statistical Z-Score Segmentation Results ---")
-print(df[['location_name', 'total_revenue', 'revenue_zscore', 'revenue_tier', 'volume_tier']])
+print(df[['location_name', 'total_revenue', 'revenue_zscore', 'total_units_sold', 'quantity_zscore', 'revenue_tier', 'volume_tier']])
 
-# 5. Output specific numbers to paste back into your SQL Functions
+# 7. Output specific numbers to paste back into your SQL Functions
 print("\n💡 Suggested SQL Thresholds based on mean and standard deviation:")
 rev_mean = df['total_revenue'].mean()
 rev_std = df['total_revenue'].std()
+qty_mean = df['total_units_sold'].mean()
+qty_std = df['total_units_sold'].std()
 
-print(f"Low Threshold (Mean - 0.5*STD): {rev_mean - 0.5 * rev_std:.2f}")
-print(f"High Threshold (Mean + 0.5*STD): {rev_mean + 0.5 * rev_std:.2f}")
+print(f"Revenue Low Threshold (Mean - 0.5*STD): {rev_mean - 0.5 * rev_std:.2f}")
+print(f"Revenue High Threshold (Mean + 0.5*STD): {rev_mean + 0.5 * rev_std:.2f}")
+print(f"Quantity Low Threshold (Mean - 0.5*STD): {qty_mean - 0.5 * qty_std:.2f}")
+print(f"Quantity High Threshold (Mean + 0.5*STD): {qty_mean + 0.5 * qty_std:.2f}")
