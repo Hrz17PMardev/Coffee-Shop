@@ -36,8 +36,9 @@ Prior to modeling, I performed a deep-dive audit to identify structural ineffici
 - **Price Integrity:** Discovered 15 product variants sold at multiple prices; maintained `unit_price` at the transaction grain to allow for future price elasticity analysis.
 - **Integrity:** Confirmed 0% duplicate rate on `transaction_id`.
 
-### 2. The Relational Model
+### 2. The Relational Model (3NF)
 The core schema ensures data integrity through PK/FK constraints:
+![Coffee Shop Entity Relationship Diagram](docs/erd/coffee_shop_erd.png)
 - **Fact Table:** `transactions`
 - **Dimension Tables:** `stores`, `store_locations` (Spatial), `categories`, `products`, and `product_variants`.
 
@@ -86,7 +87,7 @@ The core schema ensures data integrity through PK/FK constraints:
    ```
 2. **Go to the relevant folder:**
    ```bash
-   cd  project_folder
+   cd  Coffee-Shop
    ```
 3. **Launch the environment:**
    ```bash
