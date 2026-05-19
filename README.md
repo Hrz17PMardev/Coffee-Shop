@@ -39,6 +39,8 @@ Prior to modeling, I performed a deep-dive audit to identify structural ineffici
 ### 2. The Relational Model (3NF)
 The core schema ensures data integrity through PK/FK constraints:
 ![Coffee Shop Entity Relationship Diagram](docs/erd/coffee_shop_erd.png)
+*Architecture Note: The schema moves from the initial denormalized ingestion layer (`coffee_shop_raw`) on the left into a fully normalized 3NF core transactional hub, terminating in an optimized downstream analytical layer (bottom) for rapid metric aggregations and spatial queries.*
+
 - **Fact Table:** `transactions`
 - **Dimension Tables:** `stores`, `store_locations` (Spatial), `categories`, `products`, and `product_variants`.
 
